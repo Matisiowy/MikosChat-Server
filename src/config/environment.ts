@@ -16,3 +16,13 @@ export function getTrustProxy(): string[] | false {
 
   return proxies.length ? proxies : false;
 }
+
+export function getWebAuthOrigins(): string[] {
+  return (
+    process.env.WEB_AUTH_ORIGINS ??
+    'https://chat.mikrusmusic.pl,http://localhost:5173'
+  )
+    .split(',')
+    .map(origin => origin.trim())
+    .filter(Boolean);
+}
