@@ -1,3 +1,4 @@
+import { WebAuthController } from './web-auth.controller';
 import { Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
@@ -25,7 +26,7 @@ import { JwtAuthGuard } from './guards/jwt-auth.guard';
       }),
     }),
   ],
-  controllers: [AuthController],
+  controllers: [AuthController, WebAuthController],
   providers: [
     AuthService,
     JwtStrategy,
