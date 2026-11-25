@@ -3,6 +3,7 @@ import { NestFactory } from '@nestjs/core';
 import { ValidationPipe, Logger } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import helmet from 'helmet';
+import cookieParser from 'cookie-parser';
 import { AppModule } from './app.module';
 import { getCorsOrigins, getTrustProxy } from './config/environment';
 
@@ -32,6 +33,8 @@ async function bootstrap() {
           : false,
     }),
   );
+
+  app.use(cookieParser());
 
   app.setGlobalPrefix('api/v1');
 
