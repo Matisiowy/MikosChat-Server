@@ -27,7 +27,8 @@
     "test:reactions": "node scripts/test-reactions.mjs",
     "test:avatars": "node scripts/test-avatars.mjs",
     "test:attachments": "node scripts/test-attachments.mjs",
-    "test:search": "node scripts/test-search.mjs"
+    "test:search": "node scripts/test-search.mjs",
+    "test:web-auth": "node scripts/test-web-auth.mjs"
   },
   "dependencies": {
     "@nestjs/common": "^12.0.1",
