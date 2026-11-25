@@ -1,0 +1,50 @@
+name: Docker Integration
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  integration:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Generate test environment
+        run: |
+          echo "POSTGRES_PASSWORD=$(openssl rand -hex 32)" > .env
+          echo "JWT_SECRET=$(openssl rand -hex 64)" >> .env
+          echo "HOST_PORT=3000" >> .env
+
+      - name: Start services
+        run: docker compose up -d --build
+
+      - name: Wait for API
+        run: |
+          for i in $(seq 1 60); do
+            if curl -fsS http://127.0.0.1:3000/api/v1/health; then
+              echo "MikosChat API is healthy"
+              exit 0
+            fi
+            sleep 3
+          done
+          exit 1
+
+      - name: Show service status
+        if: always()
+        run: docker compose ps
+
+      - name: Show logs on failure
+        if: failure()
+        run: docker compose logs --no-color
+
+      - name: Cleanup
+        if: always()
+        run: docker compose down -v
