@@ -210,6 +210,48 @@ export class AuthService implements OnModuleInit {
     };
   }
 
+  async getWebSession(sessionId: string) {
+    const session = await this.prisma.session.findUnique({
+      where: { id: sessionId },
+      select: {
+        userId: true,
+        expiresAt: true,
+        revokedAt: true,
+        user: {
+          select: publicUserSelect,
+        },
+      },
+    });
+
+    if (
+      !session ||
+      session.revokedAt ||
+      session.expiresAt <= new Date() ||
+      session.user.status !== 'ACTIVE'
+    ) {
+      throw new UnauthorizedException('Invalid session');
+    }
+
+    return {
+      user: session.user,
+      expiresAt: session.expiresAt,
+    };
+  }
+
+  async logoutByRefreshToken(refreshToken: string) {
+    await this.prisma.session.updateMany({
+      where: {
+        refreshTokenHash: this.hashToken(refreshToken),
+        revokedAt: null,
+      },
+      data: {
+        revokedAt: new Date(),
+      },
+    });
+
+    return { success: true };
+  }
+
   async logout(userId: string, sessionId: string) {
     await this.prisma.session.updateMany({
       where: {
