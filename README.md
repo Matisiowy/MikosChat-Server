@@ -1,5 +1,13 @@
 # MikosChat Server
 
+[![CI](https://github.com/Matisiowy/MikosChat-Server/actions/workflows/ci.yml/badge.svg)](https://github.com/Matisiowy/MikosChat-Server/actions)
+[![Release](https://img.shields.io/github/v/release/Matisiowy/MikosChat-Server?include_prereleases)](https://github.com/Matisiowy/MikosChat-Server/releases)
+[![License](https://img.shields.io/github/license/Matisiowy/MikosChat-Server)](https://github.com/Matisiowy/MikosChat-Server/blob/main/LICENSE)
+[![Stars](https://img.shields.io/github/stars/Matisiowy/MikosChat-Server)](https://github.com/Matisiowy/MikosChat-Server/stargazers)
+[![Issues](https://img.shields.io/github/issues/Matisiowy/MikosChat-Server)](https://github.com/Matisiowy/MikosChat-Server/issues)
+[![Docker Integration](https://github.com/Matisiowy/MikosChat-Server/actions/workflows/integration.yml/badge.svg)](https://github.com/Matisiowy/MikosChat-Server/actions)
+
+
 ![Version](https://img.shields.io/badge/version-0.8.0-7367f0)
 ![License](https://img.shields.io/badge/license-AGPL--3.0-blue)
 ![Node.js](https://img.shields.io/badge/Node.js-24-green)
