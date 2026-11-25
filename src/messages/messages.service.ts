@@ -17,6 +17,7 @@ import { ConversationsService } from '../conversations/conversations.service';
 import { socialTransaction } from '../common/social-transaction';
 import { SendMessageDto } from './dto/send-message.dto';
 import { MessageHistoryDto } from './dto/message-history.dto';
+import { SearchMessagesDto } from './dto/search-messages.dto';
 import { messageInclude } from './message-select';
 
 @Injectable()
@@ -349,6 +350,51 @@ export class MessagesService {
       message,
       created: result.created,
     };
+  }
+
+  async search(
+    userId: string,
+    conversationId: string,
+    dto: SearchMessagesDto,
+  ) {
+    return socialTransaction(this.prisma, async tx => {
+      await this.conversations.requireMembership(
+        userId,
+        conversationId,
+        tx,
+      );
+
+      const limit = dto.limit ?? 30;
+
+      const query = dto.q
+        .trim()
+        .replace(/[\\%_]/g, '\\$&');
+
+      const messages = await tx.message.findMany({
+        where: {
+          conversationId,
+          deletedAt: null,
+          type: { not: 'SYSTEM' },
+          content: {
+            contains: query,
+            mode: 'insensitive',
+          },
+        },
+        include: messageInclude,
+        orderBy: [
+          { createdAt: 'desc' },
+          { id: 'desc' },
+        ],
+        take: limit + 1,
+      });
+
+      return {
+        items: messages
+          .slice(0, limit)
+          .map(serializeMessage),
+        hasMore: messages.length > limit,
+      };
+    });
   }
 
   async history(
