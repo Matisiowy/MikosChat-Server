@@ -1,3 +1,4 @@
+import { VersionModule } from './version/version.module';
 import { NotificationsModule } from './notifications/notifications.module';
 import { GroupAvatarsModule } from './group-avatars/group-avatars.module';
 import { GroupsModule } from './groups/groups.module';
@@ -34,6 +35,7 @@ import { PresenceModule } from './presence/presence.module';
 
 @Module({
   imports: [
+    VersionModule,
     AttachmentsModule,
     AvatarsModule,
     ConfigModule.forRoot({
