@@ -5,14 +5,13 @@ import type {
 } from 'express';
 
 export const SESSION_COOKIE = 'mikoschat_refresh';
-
-const SESSION_DURATION =
-  30 * 24 * 60 * 60 * 1000;
+export const REMEMBER_COOKIE = 'mikoschat_remember';
 
 function cookieOptions(req: Request): CookieOptions {
   return {
     httpOnly: true,
-    secure: req.secure ||
+    secure:
+      req.secure ||
       process.env.NODE_ENV === 'production',
     sameSite: 'strict',
     path: '/api/v1/auth/web',
@@ -24,23 +23,37 @@ export function setSessionCookie(
   res: Response,
   token: string,
   remember: boolean,
+  expiresAt: Date,
 ) {
-  res.cookie(SESSION_COOKIE, token, {
+  const options: CookieOptions = {
     ...cookieOptions(req),
     ...(remember
-      ? { maxAge: SESSION_DURATION }
+      ? {
+          maxAge: Math.max(
+            0,
+            expiresAt.getTime() - Date.now(),
+          ),
+        }
       : {}),
-  });
+  };
+
+  res.cookie(SESSION_COOKIE, token, options);
+
+  res.cookie(
+    REMEMBER_COOKIE,
+    remember ? '1' : '0',
+    options,
+  );
 }
 
 export function clearSessionCookie(
   req: Request,
   res: Response,
 ) {
-  res.clearCookie(
-    SESSION_COOKIE,
-    cookieOptions(req),
-  );
+  const options = cookieOptions(req);
+
+  res.clearCookie(SESSION_COOKIE, options);
+  res.clearCookie(REMEMBER_COOKIE, options);
 }
 
 export function readSessionCookie(
@@ -56,4 +69,10 @@ export function readSessionCookie(
   }
 
   return token;
+}
+
+export function readRememberCookie(
+  req: Request,
+): boolean {
+  return req.cookies?.[REMEMBER_COOKIE] === '1';
 }
