@@ -1,4 +1,4 @@
-FROM node:24-bookworm-slim AS builder
+FROM node:25-bookworm-slim AS builder
 
 WORKDIR /app
 
@@ -16,7 +16,7 @@ RUN DATABASE_URL=postgresql://placeholder:placeholder@localhost:5432/placeholder
 
 RUN npm run build
 
-FROM node:24-bookworm-slim AS runtime
+FROM node:25-bookworm-slim AS runtime
 
 WORKDIR /app
 
