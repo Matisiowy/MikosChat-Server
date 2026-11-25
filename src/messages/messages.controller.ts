@@ -22,6 +22,7 @@ import { MessagesService } from './messages.service';
 import { SendMessageDto } from './dto/send-message.dto';
 import { EditMessageDto } from './dto/edit-message.dto';
 import { MessageHistoryDto } from './dto/message-history.dto';
+import { SearchMessagesDto } from './dto/search-messages.dto';
 
 @ApiTags('Messages')
 @ApiBearerAuth()
@@ -31,6 +32,20 @@ export class MessagesController {
   constructor(
     private readonly messages: MessagesService,
   ) {}
+
+  @Get('conversations/:id/messages/search')
+  @ApiOperation({ summary: 'Search conversation messages' })
+  search(
+    @Req() req: AuthRequest,
+    @Param('id', ParseUUIDPipe) id: string,
+    @Query() dto: SearchMessagesDto,
+  ) {
+    return this.messages.search(
+      req.user.userId,
+      id,
+      dto,
+    );
+  }
 
   @Get('conversations/:id/messages')
   @ApiOperation({ summary: 'Get message history' })
